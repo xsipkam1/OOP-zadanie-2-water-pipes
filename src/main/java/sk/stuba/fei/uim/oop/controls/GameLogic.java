@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class GameLogic extends UniversalAdapter {
-    private static final int INITIAL_BOARD_SIZE = 8;
 
     @Getter
     private final JLabel boardSizeLabel;
@@ -19,11 +18,11 @@ public class GameLogic extends UniversalAdapter {
 
     public GameLogic(JFrame gameFrame) {
         game = gameFrame;
-        currentBoardSize = INITIAL_BOARD_SIZE;
+        currentBoardSize = 8;
         initializeBoard();
         game.add(currentBoard);
-        boardSizeLabel = new JLabel();
-        updateBoardSizeLabel();
+        boardSizeLabel = new JLabel("CURRENT BOARD SIZE: " + currentBoardSize);
+        boardSizeLabel.setFont(new Font("Arial", Font.BOLD, 20));
     }
 
     private void initializeBoard() {
@@ -42,17 +41,12 @@ public class GameLogic extends UniversalAdapter {
         game.repaint();
     }
 
-    private void updateBoardSizeLabel() {
-        boardSizeLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        boardSizeLabel.setText("CURRENT BOARD SIZE: " + currentBoardSize);
-    }
-
     @Override
     public void stateChanged(ChangeEvent e) {
         JSlider source = (JSlider) e.getSource();
         if (!source.getValueIsAdjusting()) {
             currentBoardSize = source.getValue();
-            updateBoardSizeLabel();
+            boardSizeLabel.setText("CURRENT BOARD SIZE: " + currentBoardSize);
             restartGame();
         }
     }

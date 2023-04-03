@@ -26,8 +26,6 @@ public class Board extends JPanel {
                 } else {
                     if (new Random().nextInt(5) == 0) {
                         tile.setType(Type.L_PIPE);
-                    } else {
-                        tile.setType(Type.EMPTY);
                     }
                 }
                 this.grid[i][j] = tile;

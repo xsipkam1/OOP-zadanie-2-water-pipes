@@ -20,21 +20,21 @@ public class GameLogic extends UniversalAdapter {
     public GameLogic(JFrame gameFrame) {
         game = gameFrame;
         currentBoardSize = INITIAL_BOARD_SIZE;
-        initializeBoard(currentBoardSize);
+        initializeBoard();
         game.add(currentBoard);
         boardSizeLabel = new JLabel();
         updateBoardSizeLabel();
     }
 
-    private void initializeBoard(int size) {
-        currentBoard = new Board(size);
+    private void initializeBoard() {
+        currentBoard = new Board(currentBoardSize);
         currentBoard.addMouseMotionListener(this);
         currentBoard.addMouseListener(this);
     }
 
     private void restartGame() {
         game.remove(currentBoard);
-        initializeBoard(currentBoardSize);
+        initializeBoard();
         game.add(currentBoard);
         game.setFocusable(true);
         game.requestFocus();

@@ -3,54 +3,127 @@ package sk.stuba.fei.uim.oop.board;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Random;
+
 
 public class Tile extends JPanel {
 
     @Setter
     private boolean highlight;
+    @Setter
+    private boolean constantHighlight;
+    @Getter @Setter
+    private boolean visited;
     @Getter @Setter
     private Type type;
+    @Getter @Setter
+    private int row;
+    @Getter @Setter
+    private int column;
     private int angle;
+    //private BufferedImage pipeImage;
+    //private BufferedImage lPipeImage;
 
     public Tile() {
         this.highlight = false;
-        this.angle = 0;
-        this.setBackground(Color.GRAY);
+        this.constantHighlight = false;
+        this.visited=false;
+        this.angle = new Random().nextInt(4) * 90;
+        this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        //this.setBackground(Color.GRAY);
         this.setType(Type.EMPTY);
+        this.setOpaque(false);
+        //this.pipeImage = null;
+        //this.lPipeImage = null;
     }
 
     public void setAngle() {
         angle += 90;
         repaint();
+        this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    }
+
+    public ArrayList<Tile> getNeighbors(Tile[][] grid) {
+        ArrayList<Tile> neighbors = new ArrayList<>();
+        if (row > 0) {
+            neighbors.add(grid[row - 1][column]);
+        }
+        if (row < grid.length - 1) {
+            neighbors.add(grid[row + 1][column]);
+        }
+        if (column > 0) {
+            neighbors.add(grid[row][column - 1]);
+        }
+        if (column < grid[0].length - 1) {
+            neighbors.add(grid[row][column + 1]);
+        }
+        return neighbors;
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (this.highlight) {
+
+        if (this.highlight || this.constantHighlight) {
             ((Graphics2D) g).setStroke(new BasicStroke(3));
-            g.setColor(Color.RED);
+            if (this.constantHighlight) {
+                g.setColor(Color.BLUE);
+            } else {
+                g.setColor(Color.RED);
+            }
             g.drawRect((int) (this.getWidth() * 0.025), (int) (this.getHeight() * 0.025),
                     (int) (this.getWidth() * 0.96), (int) (this.getHeight() * 0.96));
-            this.highlight = false;
+            if (!this.constantHighlight) {
+                this.highlight = false;
+            }
+
         }
+
         if (this.type.equals(Type.PIPE)) {
-            g.setColor(Color.BLACK);
             Graphics2D g2d = (Graphics2D) g;
             g2d.rotate(Math.toRadians(angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
-            g.fillRect(0, (int) (this.getHeight() * 0.25),
-                    this.getWidth(), (int) (this.getHeight() - (this.getHeight() * 0.5)));
+/*
+            try{
+                pipeImage=ImageIO.read(Objects.requireNonNull(Board.class.getResourceAsStream("/pipe.png")));
+            } catch (IOException e) {
+                System.out.println("Obrazok sa nenasiel, nacitavam canvas trubky.");
+            }
+*/
+            //if (pipeImage == null) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, (int) (this.getHeight() * 0.25), this.getWidth(), (int) (this.getHeight() - this.getHeight() * 0.5));
+            //} else {
+            //    g.drawImage(pipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
+            //}
+            g2d.rotate(Math.toRadians(-angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
+
         }
+
         if (this.type.equals(Type.L_PIPE)) {
-            g.setColor(Color.BLACK);
             Graphics2D g2d = (Graphics2D) g;
             g2d.rotate(Math.toRadians(angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
-            g.fillRect((int) (this.getWidth() * 0.35), -30,
-                    (int) (this.getHeight() * 0.5), (int) (this.getWidth() * 0.6));
-            g.fillRect((int) (this.getWidth() * 0.35), (int) (this.getHeight() * 0.28),
-                    this.getWidth(), (int) (this.getHeight() * 0.46));
+/*
+            try{
+                lPipeImage=ImageIO.read(Objects.requireNonNull(Board.class.getResourceAsStream("/l_pipe.png")));
+            } catch (IOException e) {
+                System.out.println("Obrazok sa nenasiel, nacitavam canvas trubky.");
+            }
+*/
+            //if (lPipeImage == null) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, (int) (this.getHeight() * 0.25), (int) (this.getWidth() * 0.75), (int) (this.getHeight() - this.getHeight() * 0.5));
+                g.fillRect((int) (this.getWidth() * 0.25), (int) (this.getHeight() * 0.25), (int) (this.getWidth() * 0.5), this.getHeight());
+            //} else {
+            //    g.drawImage(lPipeImage, 0, 0,this.getWidth(), this.getHeight(),null);
+            //}
+            g2d.rotate(Math.toRadians(-angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
         }
     }
 

@@ -22,7 +22,7 @@ public class GameLogic extends UniversalAdapter {
         initializeBoard();
         game.add(currentBoard);
         boardSizeLabel = new JLabel("CURRENT BOARD SIZE: " + currentBoardSize);
-        boardSizeLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        boardSizeLabel.setFont(new Font("Calibri", Font.BOLD, 20));
     }
 
     private void initializeBoard() {
@@ -72,17 +72,19 @@ public class GameLogic extends UniversalAdapter {
         Component current = currentBoard.getComponentAt(e.getX(), e.getY());
         if (current instanceof Tile) {
             ((Tile) current).setHighlight(true);
+            currentBoard.repaint();
         }
-        currentBoard.repaint();
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         Component current = currentBoard.getComponentAt(e.getX(), e.getY());
-        if(((Tile) current).getType().equals(Type.PIPE) || ((Tile) current).getType().equals(Type.L_PIPE)){
-            ((Tile) current).setAngle();
+        if (current instanceof Tile) {
+            if(((Tile) current).getType().equals(Type.PIPE) || ((Tile) current).getType().equals(Type.L_PIPE)){
+                ((Tile) current).setAngle();
+            }
+            currentBoard.repaint();
         }
-        currentBoard.repaint();
     }
 
 }

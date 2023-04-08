@@ -9,9 +9,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Random;
-
 
 public class Tile extends JPanel {
 
@@ -31,24 +28,23 @@ public class Tile extends JPanel {
     private Tile previous;
     @Getter
     private int angle;
-    //private BufferedImage pipeImage;
-    //private BufferedImage lPipeImage;
+    private BufferedImage pipeImage;
+    private BufferedImage lPipeImage;
 
     public Tile() {
         this.highlight = false;
         this.constantHighlight = false;
-        this.visited=false;
+        this.visited = false;
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        //this.setBackground(Color.GRAY);
         this.setType(Type.EMPTY);
         this.setOpaque(false);
-        this.previous=null;
-        //this.pipeImage = null;
-        //this.lPipeImage = null;
+        this.previous = null;
+        this.pipeImage = null;
+        this.lPipeImage = null;
     }
 
     public void setAngle(int angle) {
-        this.angle=angle;
+        this.angle = angle;
     }
 
     public void setAngle() {
@@ -105,19 +101,18 @@ public class Tile extends JPanel {
         if (this.type.equals(Type.PIPE)) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.rotate(Math.toRadians(angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
-/*
-            try{
-                pipeImage=ImageIO.read(Objects.requireNonNull(Board.class.getResourceAsStream("/pipe.png")));
-            } catch (IOException e) {
-                System.out.println("Obrazok sa nenasiel, nacitavam canvas trubky.");
+
+            try {
+                pipeImage = ImageIO.read(Board.class.getResourceAsStream("/pipe.png"));
+            } catch (IOException | IllegalArgumentException ignored) {
             }
-*/
-            //if (pipeImage == null) {
+
+            if (pipeImage == null) {
                 g.setColor(Color.BLACK);
                 g.fillRect(0, (int) (this.getHeight() * 0.25), this.getWidth(), (int) (this.getHeight() - this.getHeight() * 0.5));
-            //} else {
-            //    g.drawImage(pipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
-            //}
+            } else {
+                g.drawImage(pipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
+            }
             g2d.rotate(Math.toRadians(-angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
 
         }
@@ -125,20 +120,19 @@ public class Tile extends JPanel {
         if (this.type.equals(Type.L_PIPE)) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.rotate(Math.toRadians(angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
-/*
-            try{
-                lPipeImage=ImageIO.read(Objects.requireNonNull(Board.class.getResourceAsStream("/l_pipe.png")));
-            } catch (IOException e) {
-                System.out.println("Obrazok sa nenasiel, nacitavam canvas trubky.");
+
+            try {
+                lPipeImage = ImageIO.read(Board.class.getResourceAsStream("/l_pipe.png"));
+            } catch (IOException | IllegalArgumentException ignored) {
             }
-*/
-            //if (lPipeImage == null) {
+
+            if (lPipeImage == null) {
                 g.setColor(Color.BLACK);
                 g.fillRect(0, (int) (this.getHeight() * 0.25), (int) (this.getWidth() * 0.75), (int) (this.getHeight() - this.getHeight() * 0.5));
                 g.fillRect((int) (this.getWidth() * 0.25), (int) (this.getHeight() * 0.25), (int) (this.getWidth() * 0.5), this.getHeight());
-            //} else {
-            //    g.drawImage(lPipeImage, 0, 0,this.getWidth(), this.getHeight(),null);
-            //}
+            } else {
+                g.drawImage(lPipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
+            }
             g2d.rotate(Math.toRadians(-angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
         }
     }

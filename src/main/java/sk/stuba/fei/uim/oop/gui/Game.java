@@ -22,9 +22,9 @@ public class Game {
     }
 
     private void initializeFrame() {
-        frame = new JFrame("Waterpipes");
+        frame = new JFrame("WaterPipes");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000,1000);
+        frame.setSize(850,1000);
         frame.setResizable(false);
         frame.setFocusable(true);
         frame.requestFocusInWindow();

@@ -22,8 +22,8 @@ public class Board extends JPanel {
     private final Random generator;
 
     public Board(int size) {
-        this.generator=new Random();
-        this.path=new ArrayList<>();
+        this.generator = new Random();
+        this.path = new ArrayList<>();
         this.initializeGrid(size);
         this.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
         this.loadBackground();
@@ -31,8 +31,8 @@ public class Board extends JPanel {
 
     private void loadBackground() {
         background = null;
-        try{
-            background=ImageIO.read(Board.class.getResourceAsStream("/water.jpg"));
+        try {
+            background = ImageIO.read(Board.class.getResourceAsStream("/water.jpg"));
             return;
         } catch (IOException e) {
             System.out.println("Obrazok sa nepodarilo nacitat, nacitavam povodnu farbu pozadia.");
@@ -62,12 +62,12 @@ public class Board extends JPanel {
                 this.add(this.grid[i][j]);
             }
         }
-        if (generator.nextInt(2)==1){
-            start=grid[generator.nextInt(size)][0];
-            end=grid[generator.nextInt(size)][size-1];
+        if (generator.nextInt(2) == 1) {
+            start = grid[generator.nextInt(size)][0];
+            end = grid[generator.nextInt(size)][size - 1];
         } else {
-            start=grid[0][generator.nextInt(size)];
-            end=grid[size-1][generator.nextInt(size)];
+            start = grid[0][generator.nextInt(size)];
+            end = grid[size - 1][generator.nextInt(size)];
         }
         start.setConstantHighlight(true);
         end.setConstantHighlight(true);
@@ -82,28 +82,28 @@ public class Board extends JPanel {
             if (currentTileIndex > 0 && currentTileIndex < path.size() - 1) {
                 Tile previousTile = path.get(currentTileIndex - 1);
                 Tile nextTile = path.get(currentTileIndex + 1);
-                if ((previousTile.getColumn() < currentTile.getColumn() && nextTile.getRow()>currentTile.getRow())
-                    ||(previousTile.getRow() > currentTile.getRow() && nextTile.getColumn()<currentTile.getColumn())) {
+                if ((previousTile.getColumn() < currentTile.getColumn() && nextTile.getRow() > currentTile.getRow())
+                        || (previousTile.getRow() > currentTile.getRow() && nextTile.getColumn() < currentTile.getColumn())) {
                     angles.add(0);
-                } else if ((previousTile.getColumn()<currentTile.getColumn() && nextTile.getRow()<currentTile.getRow())
-                        || (previousTile.getRow()<currentTile.getRow() && nextTile.getColumn()<currentTile.getColumn())){
+                } else if ((previousTile.getColumn() < currentTile.getColumn() && nextTile.getRow() < currentTile.getRow())
+                        || (previousTile.getRow() < currentTile.getRow() && nextTile.getColumn() < currentTile.getColumn())) {
                     angles.add(90);
-                } else if ((previousTile.getRow()<currentTile.getRow() && nextTile.getColumn()>currentTile.getColumn())
-                        || (previousTile.getColumn()>currentTile.getColumn() && nextTile.getRow()<currentTile.getRow())){
+                } else if ((previousTile.getRow() < currentTile.getRow() && nextTile.getColumn() > currentTile.getColumn())
+                        || (previousTile.getColumn() > currentTile.getColumn() && nextTile.getRow() < currentTile.getRow())) {
                     angles.add(180);
-                } else if ((previousTile.getColumn()>currentTile.getColumn() && nextTile.getRow() > currentTile.getRow())
-                        || (previousTile.getRow()>currentTile.getRow() && nextTile.getColumn() > currentTile.getColumn())){
+                } else if ((previousTile.getColumn() > currentTile.getColumn() && nextTile.getRow() > currentTile.getRow())
+                        || (previousTile.getRow() > currentTile.getRow() && nextTile.getColumn() > currentTile.getColumn())) {
                     angles.add(270);
-                } else if (previousTile.getRow() == nextTile.getRow()){
+                } else if (previousTile.getRow() == nextTile.getRow()) {
                     angles.add(0);
-                } else if (previousTile.getColumn()==nextTile.getColumn()) {
+                } else if (previousTile.getColumn() == nextTile.getColumn()) {
                     angles.add(90);
                 }
             }
         }
         Tile nextTile = path.get(1);
         if (start.getColumn() == 0) {
-            if ((nextTile.getRow()!=start.getRow())) {
+            if ((nextTile.getRow() != start.getRow())) {
                 if (nextTile.getRow() > start.getRow()) {
                     angles.add(0, 0);
                 } else {
@@ -113,7 +113,7 @@ public class Board extends JPanel {
                 angles.add(0, 0);
             }
         } else {
-            if ((nextTile.getColumn()!=start.getColumn())) {
+            if ((nextTile.getColumn() != start.getColumn())) {
                 if (nextTile.getColumn() > start.getColumn()) {
                     angles.add(0, 180);
                 } else {
@@ -125,8 +125,8 @@ public class Board extends JPanel {
         }
 
         Tile previousTile = path.get(path.size() - 2);
-        if (end.getColumn() == size-1) {
-            if ((previousTile.getRow()!=end.getRow())) {
+        if (end.getColumn() == size - 1) {
+            if ((previousTile.getRow() != end.getRow())) {
                 if (previousTile.getRow() > end.getRow()) {
                     angles.add(270);
                 } else {
@@ -136,7 +136,7 @@ public class Board extends JPanel {
                 angles.add(0);
             }
         } else {
-            if ((previousTile.getColumn()!=end.getColumn())) {
+            if ((previousTile.getColumn() != end.getColumn())) {
                 if (previousTile.getColumn() > end.getColumn()) {
                     angles.add(270);
                 } else {
@@ -165,13 +165,13 @@ public class Board extends JPanel {
             } else {
                 Tile nextTile = path.get(1);
                 if (start.getColumn() == 0) {
-                    if ((nextTile.getRow()!=start.getRow())) {
+                    if ((nextTile.getRow() != start.getRow())) {
                         start.setType(Type.L_PIPE);
                     } else {
                         start.setType(Type.PIPE);
                     }
                 } else {
-                    if ((nextTile.getColumn()!=start.getColumn())) {
+                    if ((nextTile.getColumn() != start.getColumn())) {
                         start.setType(Type.L_PIPE);
                     } else {
                         start.setType(Type.PIPE);
@@ -179,14 +179,14 @@ public class Board extends JPanel {
                 }
 
                 Tile previousTile = path.get(path.size() - 2);
-                if (end.getColumn() == size-1) {
-                    if ((previousTile.getRow()!=end.getRow())) {
+                if (end.getColumn() == size - 1) {
+                    if ((previousTile.getRow() != end.getRow())) {
                         end.setType(Type.L_PIPE);
                     } else {
                         end.setType(Type.PIPE);
                     }
                 } else {
-                    if ((previousTile.getColumn()!=end.getColumn())) {
+                    if ((previousTile.getColumn() != end.getColumn())) {
                         end.setType(Type.L_PIPE);
                     } else {
                         end.setType(Type.PIPE);
@@ -203,7 +203,7 @@ public class Board extends JPanel {
         start.setVisited(true);
         while (!stack.isEmpty()) {
             Tile current = stack.remove(stack.size() - 1);
-            if(current.equals(end)){
+            if (current.equals(end)) {
                 while (current != null) {
                     path.add(current);
                     current = current.getPrevious();
@@ -213,7 +213,7 @@ public class Board extends JPanel {
             ArrayList<Tile> currentNeighbors = current.getNeighbors(grid);
             Collections.shuffle(currentNeighbors);
             for (Tile neighbor : currentNeighbors) {
-                if(!neighbor.isVisited()){
+                if (!neighbor.isVisited()) {
                     neighbor.setVisited(true);
                     stack.add(neighbor);
                     neighbor.setPrevious(current);

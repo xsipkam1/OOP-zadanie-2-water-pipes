@@ -28,7 +28,7 @@ public class GameLogic extends UniversalAdapter {
         game.add(currentBoard);
         boardSizeLabel = new JLabel("CURRENT BOARD SIZE: " + currentBoardSize);
         boardSizeLabel.setFont(new Font("Calibri", Font.BOLD, 20));
-        winsLabel = new JLabel("WINS: " + wins);
+        winsLabel = new JLabel("WIN STREAK: " + wins);
         winsLabel.setFont(new Font("Calibri", Font.BOLD, 20));
     }
 
@@ -42,6 +42,7 @@ public class GameLogic extends UniversalAdapter {
         game.remove(currentBoard);
         initializeBoard();
         game.add(currentBoard);
+        winsLabel.setText("WIN STREAK: " + wins);
         game.setFocusable(true);
         game.requestFocus();
         game.revalidate();
@@ -54,14 +55,13 @@ public class GameLogic extends UniversalAdapter {
         int i = 0;
         for (Tile tile : path) {
             if (tile.getAngle() != correctAngles.get(i)) {
-                //System.out.println("ZLE");
+                wins=-1;
                 return;
             }
             tile.setConstantHighlight(true);
             i++;
         }
         wins++;
-        winsLabel.setText("WINS: " + wins);
         restartGame();
     }
 
@@ -71,6 +71,7 @@ public class GameLogic extends UniversalAdapter {
         if (!source.getValueIsAdjusting()) {
             currentBoardSize = source.getValue();
             boardSizeLabel.setText("CURRENT BOARD SIZE: " + currentBoardSize);
+            wins=0;
             restartGame();
         }
     }
@@ -81,6 +82,7 @@ public class GameLogic extends UniversalAdapter {
             case KeyEvent.VK_ESCAPE:
                 game.dispose();
             case KeyEvent.VK_R:
+                wins=0;
                 restartGame();
                 break;
             case KeyEvent.VK_ENTER:
@@ -91,6 +93,7 @@ public class GameLogic extends UniversalAdapter {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        wins=0;
         restartGame();
     }
 
@@ -107,7 +110,7 @@ public class GameLogic extends UniversalAdapter {
     public void mouseClicked(MouseEvent e) {
         Component current = currentBoard.getComponentAt(e.getX(), e.getY());
         if (current instanceof Tile) {
-            if(((Tile) current).getType().equals(Type.PIPE) || ((Tile) current).getType().equals(Type.L_PIPE)){
+            if (((Tile) current).getType().equals(Type.PIPE) || ((Tile) current).getType().equals(Type.L_PIPE)) {
                 ((Tile) current).setAngle();
             }
             currentBoard.repaint();

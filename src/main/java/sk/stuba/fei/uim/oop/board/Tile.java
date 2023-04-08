@@ -27,6 +27,9 @@ public class Tile extends JPanel {
     private int row;
     @Getter @Setter
     private int column;
+    @Getter @Setter
+    private Tile previous;
+    @Getter
     private int angle;
     //private BufferedImage pipeImage;
     //private BufferedImage lPipeImage;
@@ -35,17 +38,30 @@ public class Tile extends JPanel {
         this.highlight = false;
         this.constantHighlight = false;
         this.visited=false;
-        this.angle = new Random().nextInt(4) * 90;
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         //this.setBackground(Color.GRAY);
         this.setType(Type.EMPTY);
         this.setOpaque(false);
+        this.previous=null;
         //this.pipeImage = null;
         //this.lPipeImage = null;
     }
 
+    public void setAngle(int angle) {
+        this.angle=angle;
+    }
+
     public void setAngle() {
         angle += 90;
+        if (this.type.equals(Type.PIPE)) {
+            if (angle > 90) {
+                angle = 0;
+            }
+        } else {
+            if (angle > 270) {
+                angle = 0;
+            }
+        }
         repaint();
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     }

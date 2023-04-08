@@ -61,6 +61,7 @@ public class Game {
         slider.addChangeListener(logic);
         buttonRestart.addActionListener(logic);
         sideMenu.add(logic.getBoardSizeLabel());
+        sideMenu.add(logic.getWinsLabel());
     }
 
 }

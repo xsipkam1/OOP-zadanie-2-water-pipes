@@ -157,41 +157,48 @@ public class Board extends JPanel {
                 Tile nextTile = path.get(currentTile + 1);
                 if (previousTile.getRow() == nextTile.getRow() || previousTile.getColumn() == nextTile.getColumn()) {
                     tile.setType(Type.PIPE);
-                    tile.setAngle(new Random().nextInt(2) * 90);
+                    tile.setAngle(generator.nextInt(2) * 90);
                 } else {
                     tile.setType(Type.L_PIPE);
-                    tile.setAngle(new Random().nextInt(4) * 90);
+                    tile.setAngle(generator.nextInt(4) * 90);
                 }
+            }
+        }
+        Tile nextTile = path.get(1);
+        if (start.getColumn() == 0) {
+            if ((nextTile.getRow() != start.getRow())) {
+                start.setType(Type.L_PIPE);
+                start.setAngle(generator.nextInt(4) * 90);
             } else {
-                Tile nextTile = path.get(1);
-                if (start.getColumn() == 0) {
-                    if ((nextTile.getRow() != start.getRow())) {
-                        start.setType(Type.L_PIPE);
-                    } else {
-                        start.setType(Type.PIPE);
-                    }
-                } else {
-                    if ((nextTile.getColumn() != start.getColumn())) {
-                        start.setType(Type.L_PIPE);
-                    } else {
-                        start.setType(Type.PIPE);
-                    }
-                }
+                start.setType(Type.PIPE);
+                start.setAngle(generator.nextInt(2) * 90);
+            }
+        } else {
+            if ((nextTile.getColumn() != start.getColumn())) {
+                start.setType(Type.L_PIPE);
+                start.setAngle(generator.nextInt(4) * 90);
+            } else {
+                start.setType(Type.PIPE);
+                start.setAngle(generator.nextInt(2) * 90);
+            }
+        }
 
-                Tile previousTile = path.get(path.size() - 2);
-                if (end.getColumn() == size - 1) {
-                    if ((previousTile.getRow() != end.getRow())) {
-                        end.setType(Type.L_PIPE);
-                    } else {
-                        end.setType(Type.PIPE);
-                    }
-                } else {
-                    if ((previousTile.getColumn() != end.getColumn())) {
-                        end.setType(Type.L_PIPE);
-                    } else {
-                        end.setType(Type.PIPE);
-                    }
-                }
+        Tile previousTile = path.get(path.size() - 2);
+        if (end.getColumn() == size - 1) {
+            if ((previousTile.getRow() != end.getRow())) {
+                end.setType(Type.L_PIPE);
+                end.setAngle(generator.nextInt(4) * 90);
+            } else {
+                end.setType(Type.PIPE);
+                end.setAngle(generator.nextInt(2) * 90);
+            }
+        } else {
+            if ((previousTile.getColumn() != end.getColumn())) {
+                end.setType(Type.L_PIPE);
+                end.setAngle(generator.nextInt(4) * 90);
+            } else {
+                end.setType(Type.PIPE);
+                end.setAngle(generator.nextInt(2) * 90);
             }
         }
     }
@@ -223,6 +230,5 @@ public class Board extends JPanel {
         Collections.reverse(path);
         return path;
     }
-
 
 }

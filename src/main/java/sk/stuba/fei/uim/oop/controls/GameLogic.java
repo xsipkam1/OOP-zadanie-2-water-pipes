@@ -29,10 +29,15 @@ public class GameLogic {
         this.wins = 0;
         this.initializeBoard();
         this.game.add(currentBoard);
-        this.boardSizeLabel = new JLabel("CURRENT BOARD SIZE: " + currentBoardSize);
-        this.boardSizeLabel.setFont(new Font("Calibri", Font.BOLD, 20));
+        this.boardSizeLabel = new JLabel("BOARD SIZE: " + currentBoardSize);
+        this.setupLabel(this.boardSizeLabel);
         this.winsLabel = new JLabel("WIN STREAK: " + wins);
-        this.winsLabel.setFont(new Font("Calibri", Font.BOLD, 20));
+        this.setupLabel(this.winsLabel);
+    }
+
+    private void setupLabel(JLabel label) {
+        label.setFont(new Font("Calibri", Font.BOLD, 20));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
     }
 
     private void initializeBoard() {
@@ -54,11 +59,14 @@ public class GameLogic {
 
     protected void checkWin() {
         ArrayList<Tile> path = this.currentBoard.getPath();
+        for (Tile tile : path) {
+            tile.setConstantHighlight(false);
+        }
         ArrayList<Integer> correctAngles = this.currentBoard.getCorrectAngles(path, currentBoardSize);
         int i = 0;
         for (Tile tile : path) {
             if (tile.getAngle() != correctAngles.get(i)) {
-                this.wins=-1;
+                this.wins = -1;
                 return;
             }
             tile.setConstantHighlight(true);

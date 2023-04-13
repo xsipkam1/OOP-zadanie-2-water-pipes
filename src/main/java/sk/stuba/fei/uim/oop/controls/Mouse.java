@@ -11,7 +11,7 @@ public class Mouse extends MouseAdapter {
     private final GameLogic game;
 
     public Mouse(GameLogic gameLogic) {
-        this.game=gameLogic;
+        this.game = gameLogic;
     }
 
     @Override

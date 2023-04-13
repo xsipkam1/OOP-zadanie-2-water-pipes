@@ -18,7 +18,7 @@ public class Tile extends JPanel {
     private boolean constantHighlight;
     @Getter @Setter
     private boolean visited;
-    @Getter @Setter
+    @Getter
     private Type type;
     @Getter @Setter
     private int row;
@@ -43,38 +43,53 @@ public class Tile extends JPanel {
         this.lPipeImage = null;
     }
 
+    public void setType(Type type) {
+        this.type = type;
+        if (this.type.equals(Type.PIPE)) {
+            try {
+                this.pipeImage = ImageIO.read(Board.class.getResourceAsStream("/pipe.png"));
+            } catch (IOException | IllegalArgumentException ignored) {
+            }
+        } else if (this.type.equals(Type.L_PIPE)) {
+            try {
+                this.lPipeImage = ImageIO.read(Board.class.getResourceAsStream("/l_pipe.png"));
+            } catch (IOException | IllegalArgumentException ignored) {
+            }
+        }
+    }
+
     public void setAngle(int angle) {
         this.angle = angle;
     }
 
     public void setAngle() {
-        angle += 90;
+        this.angle += 90;
         if (this.type.equals(Type.PIPE)) {
-            if (angle > 90) {
-                angle = 0;
+            if (this.angle > 90) {
+                this.angle = 0;
             }
         } else {
-            if (angle > 270) {
-                angle = 0;
+            if (this.angle > 270) {
+                this.angle = 0;
             }
         }
-        repaint();
+        this.repaint();
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     }
 
     public ArrayList<Tile> getNeighbors(Tile[][] grid) {
         ArrayList<Tile> neighbors = new ArrayList<>();
-        if (row > 0) {
-            neighbors.add(grid[row - 1][column]);
+        if (this.row > 0) {
+            neighbors.add(grid[this.row - 1][this.column]);
         }
-        if (row < grid.length - 1) {
-            neighbors.add(grid[row + 1][column]);
+        if (this.row < grid.length - 1) {
+            neighbors.add(grid[this.row + 1][this.column]);
         }
-        if (column > 0) {
-            neighbors.add(grid[row][column - 1]);
+        if (this.column > 0) {
+            neighbors.add(grid[this.row][this.column - 1]);
         }
-        if (column < grid[0].length - 1) {
-            neighbors.add(grid[row][column + 1]);
+        if (this.column < grid[0].length - 1) {
+            neighbors.add(grid[this.row][this.column + 1]);
         }
         return neighbors;
     }
@@ -102,38 +117,30 @@ public class Tile extends JPanel {
             Graphics2D g2d = (Graphics2D) g;
             g2d.rotate(Math.toRadians(angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
 
-            try {
-                pipeImage = ImageIO.read(Board.class.getResourceAsStream("/pipe.png"));
-            } catch (IOException | IllegalArgumentException ignored) {
-            }
-
-            if (pipeImage == null) {
+            if (this.pipeImage == null) {
                 g.setColor(Color.BLACK);
                 g.fillRect(0, (int) (this.getHeight() * 0.25), this.getWidth(), (int) (this.getHeight() - this.getHeight() * 0.5));
             } else {
-                g.drawImage(pipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
+                g.drawImage(this.pipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
             }
-            g2d.rotate(Math.toRadians(-angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
+
+            g2d.rotate(Math.toRadians(-this.angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
 
         }
 
         if (this.type.equals(Type.L_PIPE)) {
             Graphics2D g2d = (Graphics2D) g;
-            g2d.rotate(Math.toRadians(angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
+            g2d.rotate(Math.toRadians(this.angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
 
-            try {
-                lPipeImage = ImageIO.read(Board.class.getResourceAsStream("/l_pipe.png"));
-            } catch (IOException | IllegalArgumentException ignored) {
-            }
-
-            if (lPipeImage == null) {
+            if (this.lPipeImage == null) {
                 g.setColor(Color.BLACK);
                 g.fillRect(0, (int) (this.getHeight() * 0.25), (int) (this.getWidth() * 0.75), (int) (this.getHeight() - this.getHeight() * 0.5));
                 g.fillRect((int) (this.getWidth() * 0.25), (int) (this.getHeight() * 0.25), (int) (this.getWidth() * 0.5), this.getHeight());
             } else {
-                g.drawImage(lPipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
+                g.drawImage(this.lPipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
             }
-            g2d.rotate(Math.toRadians(-angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
+
+            g2d.rotate(Math.toRadians(-this.angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
         }
     }
 

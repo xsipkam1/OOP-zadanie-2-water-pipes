@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Random;
 
-
 public class Board extends JPanel {
 
     private Tile[][] grid;
@@ -30,9 +29,9 @@ public class Board extends JPanel {
     }
 
     private void loadBackground() {
-        background = null;
+        this.background = null;
         try {
-            background = ImageIO.read(Board.class.getResourceAsStream("/water.jpg"));
+            this.background = ImageIO.read(Board.class.getResourceAsStream("/water.jpg"));
             return;
         } catch (IOException e) {
             System.out.println("Obrazok sa nepodarilo nacitat, nacitavam povodnu farbu pozadia.");
@@ -45,8 +44,8 @@ public class Board extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (background != null) {
-            g.drawImage(background, 0, 0, null);
+        if (this.background != null) {
+            g.drawImage(this.background, 0, 0, null);
         }
     }
 
@@ -63,16 +62,18 @@ public class Board extends JPanel {
             }
         }
         if (generator.nextInt(2) == 1) {
-            start = grid[generator.nextInt(size)][0];
-            end = grid[generator.nextInt(size)][size - 1];
+            this.start = grid[generator.nextInt(size)][0];
+            this.end = grid[generator.nextInt(size)][size - 1];
         } else {
-            start = grid[0][generator.nextInt(size)];
-            end = grid[size - 1][generator.nextInt(size)];
+            this.start = grid[0][generator.nextInt(size)];
+            this.end = grid[size - 1][generator.nextInt(size)];
         }
-        start.setConstantHighlight(true);
-        end.setConstantHighlight(true);
-        path = generatePath();
-        drawPath(path, size);
+        this.start.setOpaque(true);
+        this.start.setBackground(Color.GRAY);
+        this.end.setOpaque(true);
+        this.end.setBackground(Color.GRAY);
+        this.path = generatePath();
+        this.drawPath(path, size);
     }
 
     public ArrayList<Integer> getCorrectAngles(ArrayList<Tile> path, int size) {
@@ -103,8 +104,8 @@ public class Board extends JPanel {
         }
         Tile nextTile = path.get(1);
         if (start.getColumn() == 0) {
-            if ((nextTile.getRow() != start.getRow())) {
-                if (nextTile.getRow() > start.getRow()) {
+            if ((nextTile.getRow() != this.start.getRow())) {
+                if (nextTile.getRow() > this.start.getRow()) {
                     angles.add(0, 0);
                 } else {
                     angles.add(0, 90);
@@ -113,8 +114,8 @@ public class Board extends JPanel {
                 angles.add(0, 0);
             }
         } else {
-            if ((nextTile.getColumn() != start.getColumn())) {
-                if (nextTile.getColumn() > start.getColumn()) {
+            if ((nextTile.getColumn() != this.start.getColumn())) {
+                if (nextTile.getColumn() > this.start.getColumn()) {
                     angles.add(0, 180);
                 } else {
                     angles.add(0, 90);
@@ -125,9 +126,9 @@ public class Board extends JPanel {
         }
 
         Tile previousTile = path.get(path.size() - 2);
-        if (end.getColumn() == size - 1) {
-            if ((previousTile.getRow() != end.getRow())) {
-                if (previousTile.getRow() > end.getRow()) {
+        if (this.end.getColumn() == size - 1) {
+            if ((previousTile.getRow() != this.end.getRow())) {
+                if (previousTile.getRow() > this.end.getRow()) {
                     angles.add(270);
                 } else {
                     angles.add(180);
@@ -136,8 +137,8 @@ public class Board extends JPanel {
                 angles.add(0);
             }
         } else {
-            if ((previousTile.getColumn() != end.getColumn())) {
-                if (previousTile.getColumn() > end.getColumn()) {
+            if ((previousTile.getColumn() != this.end.getColumn())) {
+                if (previousTile.getColumn() > this.end.getColumn()) {
                     angles.add(270);
                 } else {
                     angles.add(0);
@@ -157,67 +158,47 @@ public class Board extends JPanel {
                 Tile nextTile = path.get(currentTile + 1);
                 if (previousTile.getRow() == nextTile.getRow() || previousTile.getColumn() == nextTile.getColumn()) {
                     tile.setType(Type.PIPE);
-                    tile.setAngle(generator.nextInt(2) * 90);
+                    tile.setAngle(this.generator.nextInt(2) * 90);
                 } else {
                     tile.setType(Type.L_PIPE);
-                    tile.setAngle(generator.nextInt(4) * 90);
+                    tile.setAngle(this.generator.nextInt(4) * 90);
                 }
             }
         }
         Tile nextTile = path.get(1);
-        if (start.getColumn() == 0) {
-            if ((nextTile.getRow() != start.getRow())) {
-                start.setType(Type.L_PIPE);
-                start.setAngle(generator.nextInt(4) * 90);
-            } else {
-                start.setType(Type.PIPE);
-                start.setAngle(generator.nextInt(2) * 90);
-            }
+        if ((this.start.getColumn() == 0 && nextTile.getRow() != start.getRow()) || (this.start.getColumn() != 0 && nextTile.getColumn() != start.getColumn())) {
+            this.start.setType(Type.L_PIPE);
+            this.start.setAngle(this.generator.nextInt(4) * 90);
         } else {
-            if ((nextTile.getColumn() != start.getColumn())) {
-                start.setType(Type.L_PIPE);
-                start.setAngle(generator.nextInt(4) * 90);
-            } else {
-                start.setType(Type.PIPE);
-                start.setAngle(generator.nextInt(2) * 90);
-            }
+            this.start.setType(Type.PIPE);
+            this.start.setAngle(this.generator.nextInt(2) * 90);
         }
 
         Tile previousTile = path.get(path.size() - 2);
-        if (end.getColumn() == size - 1) {
-            if ((previousTile.getRow() != end.getRow())) {
-                end.setType(Type.L_PIPE);
-                end.setAngle(generator.nextInt(4) * 90);
-            } else {
-                end.setType(Type.PIPE);
-                end.setAngle(generator.nextInt(2) * 90);
-            }
+        if ((this.end.getColumn() == size - 1 && previousTile.getRow() != end.getRow()) || (this.end.getColumn() != size - 1 && previousTile.getColumn() != end.getColumn())) {
+            this.end.setType(Type.L_PIPE);
+            this.end.setAngle(this.generator.nextInt(4) * 90);
         } else {
-            if ((previousTile.getColumn() != end.getColumn())) {
-                end.setType(Type.L_PIPE);
-                end.setAngle(generator.nextInt(4) * 90);
-            } else {
-                end.setType(Type.PIPE);
-                end.setAngle(generator.nextInt(2) * 90);
-            }
+            this.end.setType(Type.PIPE);
+            this.end.setAngle(this.generator.nextInt(2) * 90);
         }
     }
 
     private ArrayList<Tile> generatePath() {
         ArrayList<Tile> path = new ArrayList<>();
         ArrayList<Tile> stack = new ArrayList<>();
-        stack.add(start);
-        start.setVisited(true);
+        stack.add(this.start);
+        this.start.setVisited(true);
         while (!stack.isEmpty()) {
             Tile current = stack.remove(stack.size() - 1);
-            if (current.equals(end)) {
+            if (current.equals(this.end)) {
                 while (current != null) {
                     path.add(current);
                     current = current.getPrevious();
                 }
                 break;
             }
-            ArrayList<Tile> currentNeighbors = current.getNeighbors(grid);
+            ArrayList<Tile> currentNeighbors = current.getNeighbors(this.grid);
             Collections.shuffle(currentNeighbors);
             for (Tile neighbor : currentNeighbors) {
                 if (!neighbor.isVisited()) {

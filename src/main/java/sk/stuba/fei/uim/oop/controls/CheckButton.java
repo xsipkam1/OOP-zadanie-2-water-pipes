@@ -4,11 +4,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class RestartButton extends JButton implements ActionListener {
-    private static final String buttonName = "RESTART";
+public class CheckButton extends JButton implements ActionListener {
+    private static final String buttonName = "CHECK";
     private final GameLogic game;
 
-    public RestartButton(GameLogic gameLogic) {
+    public CheckButton(GameLogic gameLogic) {
         super(buttonName);
         this.game = gameLogic;
         this.setFocusable(false);
@@ -17,8 +17,7 @@ public class RestartButton extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        this.game.setWins(0);
-        this.game.restartGame();
+        this.game.checkWin();
     }
 
 }

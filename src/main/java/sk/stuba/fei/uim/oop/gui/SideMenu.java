@@ -1,29 +1,46 @@
 package sk.stuba.fei.uim.oop.gui;
 
-import sk.stuba.fei.uim.oop.controls.CheckButton;
+import sk.stuba.fei.uim.oop.controls.Buttons;
 import sk.stuba.fei.uim.oop.controls.GameLogic;
-import sk.stuba.fei.uim.oop.controls.RestartButton;
-import sk.stuba.fei.uim.oop.controls.SizeSlider;
+import sk.stuba.fei.uim.oop.controls.Slider;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class SideMenu extends JPanel {
 
-    public SideMenu(GameLogic logic, RestartButton buttonRestart, CheckButton buttonCheck, SizeSlider slider) {
+    public SideMenu(GameLogic baseLogic) {
         super();
         this.setLayout(new GridLayout(2, 1));
         this.setBackground(Color.WHITE);
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
+
+        JButton buttonRestart = new JButton("RESTART");
+        buttonRestart.setFocusable(false);
+
+        JButton buttonCheck = new JButton("CHECK");
+        buttonCheck.setFocusable(false);
+
+        Buttons buttonControls = new Buttons(baseLogic, buttonRestart, buttonCheck);
+        buttonRestart.addActionListener(buttonControls);
+        buttonCheck.addActionListener(buttonControls);
+
+        JSlider slider = new JSlider(JSlider.HORIZONTAL, 8, 10, 8);
+        slider.setMajorTickSpacing(1);
+        slider.setMinorTickSpacing(1);
+        slider.setSnapToTicks(true);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        slider.addChangeListener(new Slider(baseLogic));
 
         JPanel upperPart = new JPanel(new GridLayout(1, 2));
         upperPart.add(buttonRestart);
         upperPart.add(buttonCheck);
 
         JPanel lowerPart = new JPanel(new GridLayout(1, 3));
-        lowerPart.add(logic.getWinsLabel());
+        lowerPart.add(baseLogic.getWinsLabel());
         lowerPart.add(slider);
-        lowerPart.add(logic.getBoardSizeLabel());
+        lowerPart.add(baseLogic.getBoardSizeLabel());
 
         this.add(upperPart);
         this.add(lowerPart);

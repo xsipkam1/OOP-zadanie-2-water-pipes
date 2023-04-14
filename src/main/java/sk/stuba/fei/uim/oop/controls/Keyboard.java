@@ -7,8 +7,8 @@ import java.awt.event.KeyEvent;
 public class Keyboard extends KeyboardAdapter {
     private final GameLogic game;
 
-    public Keyboard(GameLogic gameLogic) {
-        this.game = gameLogic;
+    public Keyboard(GameLogic baseLogic) {
+        this.game = baseLogic;
     }
 
     @Override

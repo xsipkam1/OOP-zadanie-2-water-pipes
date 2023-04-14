@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class GameLogic {
 
+    private static final int INITIAL_BOARD_SIZE = 8;
     @Getter
     private final JLabel boardSizeLabel;
     @Getter
@@ -25,7 +26,7 @@ public class GameLogic {
 
     public GameLogic(JFrame gameFrame) {
         this.game = gameFrame;
-        this.currentBoardSize = 8;
+        this.currentBoardSize = INITIAL_BOARD_SIZE;
         this.wins = 0;
         this.initializeBoard();
         this.game.add(currentBoard);

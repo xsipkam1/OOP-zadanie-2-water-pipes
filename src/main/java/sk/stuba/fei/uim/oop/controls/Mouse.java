@@ -10,8 +10,8 @@ import java.awt.event.MouseEvent;
 public class Mouse extends MouseAdapter {
     private final GameLogic game;
 
-    public Mouse(GameLogic gameLogic) {
-        this.game = gameLogic;
+    public Mouse(GameLogic baseLogic) {
+        this.game = baseLogic;
     }
 
     @Override
@@ -29,8 +29,9 @@ public class Mouse extends MouseAdapter {
         if (current instanceof Tile) {
             if (((Tile) current).getType().equals(Type.PIPE) || ((Tile) current).getType().equals(Type.L_PIPE)) {
                 ((Tile) current).setAngle();
+                ((Tile) current).setHighlight(true);
+                this.game.getCurrentBoard().repaint();
             }
-            this.game.getCurrentBoard().repaint();
         }
     }
 

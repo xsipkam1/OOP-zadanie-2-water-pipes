@@ -12,12 +12,12 @@ import java.util.Random;
 
 public class Board extends JPanel {
 
+    @Getter
+    private ArrayList<Tile> path;
     private Tile[][] grid;
     private BufferedImage background;
     private Tile start;
     private Tile end;
-    @Getter
-    private ArrayList<Tile> path;
     private final Random generator;
 
     public Board(int size) {

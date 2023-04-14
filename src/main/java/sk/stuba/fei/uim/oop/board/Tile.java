@@ -102,20 +102,17 @@ public class Tile extends JPanel {
             ((Graphics2D) g).setStroke(new BasicStroke(3));
             if (this.constantHighlight) {
                 g.setColor(Color.BLUE);
-            } else {
+            }
+            if (this.highlight){
                 g.setColor(Color.RED);
             }
             g.drawRect((int) (this.getWidth() * 0.025), (int) (this.getHeight() * 0.025),
                     (int) (this.getWidth() * 0.96), (int) (this.getHeight() * 0.96));
-            if (!this.constantHighlight) {
-                this.highlight = false;
-            }
-
+            this.highlight = false;
         }
 
         if (this.type.equals(Type.PIPE)) {
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.rotate(Math.toRadians(angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
+            ((Graphics2D) g).rotate(Math.toRadians(angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
 
             if (this.pipeImage == null) {
                 g.setColor(Color.BLACK);
@@ -124,13 +121,10 @@ public class Tile extends JPanel {
                 g.drawImage(this.pipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
             }
 
-            g2d.rotate(Math.toRadians(-this.angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
+            ((Graphics2D) g).rotate(Math.toRadians(-this.angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
 
-        }
-
-        if (this.type.equals(Type.L_PIPE)) {
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.rotate(Math.toRadians(this.angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
+        } else if (this.type.equals(Type.L_PIPE)) {
+            ((Graphics2D) g).rotate(Math.toRadians(this.angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
 
             if (this.lPipeImage == null) {
                 g.setColor(Color.BLACK);
@@ -140,8 +134,9 @@ public class Tile extends JPanel {
                 g.drawImage(this.lPipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
             }
 
-            g2d.rotate(Math.toRadians(-this.angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
+            ((Graphics2D) g).rotate(Math.toRadians(-this.angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
         }
+
     }
 
 }

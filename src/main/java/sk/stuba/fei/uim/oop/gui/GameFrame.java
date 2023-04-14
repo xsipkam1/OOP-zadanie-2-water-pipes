@@ -10,20 +10,17 @@ public class GameFrame extends JFrame {
     public GameFrame() {
         super("WaterPipes");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(850, 1000);
+        this.setSize(875, 1000);
         this.setResizable(false);
         this.setFocusable(true);
         this.requestFocusInWindow();
         this.setLocationRelativeTo(null);
 
-        GameLogic logic = new GameLogic(this);
-        RestartButton buttonRestart = new RestartButton(logic);
-        CheckButton buttonCheck = new CheckButton(logic);
-        SizeSlider slider = new SizeSlider(logic);
-        SideMenu sideMenu = new SideMenu(logic, buttonRestart, buttonCheck, slider);
+        GameLogic baseLogic = new GameLogic(this);
+        SideMenu sideMenu = new SideMenu(baseLogic);
 
         this.add(sideMenu, BorderLayout.SOUTH);
-        this.addKeyListener(new Keyboard(logic));
+        this.addKeyListener(new Keyboard(baseLogic));
         this.setVisible(true);
     }
 

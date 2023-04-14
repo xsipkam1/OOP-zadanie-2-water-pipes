@@ -4,18 +4,11 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class SizeSlider extends JSlider implements ChangeListener {
+public class Slider implements ChangeListener {
     private final GameLogic game;
 
-    public SizeSlider(GameLogic gameLogic) {
-        super(JSlider.HORIZONTAL, 8, 10, 8);
-        this.setMajorTickSpacing(1);
-        this.setMinorTickSpacing(1);
-        this.setSnapToTicks(true);
-        this.setPaintTicks(true);
-        this.setPaintLabels(true);
-        this.addChangeListener(this);
-        this.game = gameLogic;
+    public Slider(GameLogic baseLogic) {
+        this.game = baseLogic;
     }
 
     @Override
@@ -28,4 +21,5 @@ public class SizeSlider extends JSlider implements ChangeListener {
             this.game.restartGame();
         }
     }
+
 }

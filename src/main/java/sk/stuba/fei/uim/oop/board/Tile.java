@@ -94,6 +94,20 @@ public class Tile extends JPanel {
         return neighbors;
     }
 
+    public  ArrayList<Tile> findAllAdjacentTiles(ArrayList<Tile> path) {
+        ArrayList<Tile> currentAdjacentTiles = new ArrayList<>();
+        for (Tile neighbor : path) {
+            if (!neighbor.equals(this)) {
+                int dColumn = Math.abs(this.getColumn() - neighbor.getColumn());
+                int dRow = Math.abs(this.getRow() - neighbor.getRow());
+                if ((dColumn == 1 && dRow == 0) || (dColumn == 0 && dRow == 1)) {
+                    currentAdjacentTiles.add(neighbor);
+                }
+            }
+        }
+        return currentAdjacentTiles;
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

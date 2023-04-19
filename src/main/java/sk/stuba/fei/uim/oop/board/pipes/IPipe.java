@@ -1,6 +1,5 @@
 package sk.stuba.fei.uim.oop.board.pipes;
 
-
 import sk.stuba.fei.uim.oop.board.Board;
 
 import javax.imageio.ImageIO;
@@ -40,7 +39,6 @@ public class IPipe extends Pipe {
             g.drawImage(this.pipeImage, 0, 0, this.getWidth(), this.getHeight(), null);
         }
         ((Graphics2D) g).rotate(Math.toRadians(-this.angle), this.getWidth() / 2.0, this.getHeight() / 2.0);
-
     }
 
 }

@@ -4,10 +4,10 @@ import sk.stuba.fei.uim.oop.controls.adapters.KeyboardAdapter;
 
 import java.awt.event.KeyEvent;
 
-public class Keyboard extends KeyboardAdapter {
+public class FrameInput extends KeyboardAdapter {
     private final GameLogic game;
 
-    public Keyboard(GameLogic baseLogic) {
+    public FrameInput(GameLogic baseLogic) {
         this.game = baseLogic;
     }
 
@@ -25,5 +25,4 @@ public class Keyboard extends KeyboardAdapter {
                 break;
         }
     }
-
 }

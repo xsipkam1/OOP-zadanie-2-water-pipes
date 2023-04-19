@@ -17,10 +17,11 @@ public class GameFrame extends JFrame {
         this.setLocationRelativeTo(null);
 
         GameLogic baseLogic = new GameLogic(this);
+        FrameInput userFrameInputManager = new FrameInput(baseLogic);
         SideMenu sideMenu = new SideMenu(baseLogic);
 
         this.add(sideMenu, BorderLayout.SOUTH);
-        this.addKeyListener(new Keyboard(baseLogic));
+        this.addKeyListener(userFrameInputManager);
         this.setVisible(true);
     }
 

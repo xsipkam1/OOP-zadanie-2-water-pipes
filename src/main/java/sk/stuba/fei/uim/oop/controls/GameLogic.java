@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import sk.stuba.fei.uim.oop.board.*;
 import sk.stuba.fei.uim.oop.board.pipes.*;
+import sk.stuba.fei.uim.oop.gui.GameFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,20 +18,21 @@ public class GameLogic {
     @Getter
     private final JLabel winsLabel;
     @Getter
-    private final JFrame game;
+    private final GameFrame game;
     @Getter
     private Board currentBoard;
     @Getter @Setter
     private int currentBoardSize;
     @Setter
     private int wins;
+    private final BoardInput userBoardInputManager;
 
-    public GameLogic(JFrame gameFrame) {
+    public GameLogic(GameFrame gameFrame) {
         this.game = gameFrame;
+        this.userBoardInputManager = new BoardInput(this);
         this.currentBoardSize = INITIAL_BOARD_SIZE;
         this.wins = 0;
         this.initializeBoard();
-        this.game.add(currentBoard);
         this.boardSizeLabel = new JLabel("BOARD SIZE: " + currentBoardSize);
         this.setupLabel(this.boardSizeLabel);
         this.winsLabel = new JLabel("WIN STREAK: " + wins);
@@ -44,8 +46,9 @@ public class GameLogic {
 
     private void initializeBoard() {
         this.currentBoard = new Board(currentBoardSize);
-        this.currentBoard.addMouseMotionListener(new Mouse(this));
-        this.currentBoard.addMouseListener(new Mouse(this));
+        this.currentBoard.addMouseMotionListener(userBoardInputManager);
+        this.currentBoard.addMouseListener(userBoardInputManager);
+        this.game.add(currentBoard);
     }
 
     protected void restartGame() {
@@ -101,34 +104,22 @@ public class GameLogic {
         return true;
     }
 
-    private void unhighlightTiles() {
-        for (Tile[] tiles : this.currentBoard.getGrid()) {
-            for (Tile tile : tiles) {
-                tile.setConstantHighlight(false);
-            }
-        }
-    }
-
     private boolean checkVerticalConnection(Pipe current, Pipe neighbor) {
         if (current.getRow() < neighbor.getRow()) {
             if (current instanceof IPipe && current.getAngle() == 90 ||
                     current instanceof LPipe && current.getAngle() == 270 ||
                     current instanceof LPipe && current.getAngle() == 0) {
-                if (neighbor instanceof IPipe && neighbor.getAngle() == 90 ||
+                return neighbor instanceof IPipe && neighbor.getAngle() == 90 ||
                         neighbor instanceof LPipe && neighbor.getAngle() == 90 ||
-                        neighbor instanceof LPipe && neighbor.getAngle() == 180) {
-                    return true;
-                }
+                        neighbor instanceof LPipe && neighbor.getAngle() == 180;
             }
         } else if (current.getRow() > neighbor.getRow()) {
             if (current instanceof IPipe && current.getAngle() == 90 ||
                     current instanceof LPipe && current.getAngle() == 90 ||
                     current instanceof LPipe && current.getAngle() == 180) {
-                if (neighbor instanceof IPipe && neighbor.getAngle() == 90 ||
+                return neighbor instanceof IPipe && neighbor.getAngle() == 90 ||
                         neighbor instanceof LPipe && neighbor.getAngle() == 270 ||
-                        neighbor instanceof LPipe && neighbor.getAngle() == 0) {
-                    return true;
-                }
+                        neighbor instanceof LPipe && neighbor.getAngle() == 0;
             }
         }
         return false;
@@ -139,21 +130,17 @@ public class GameLogic {
             if (current instanceof IPipe && current.getAngle() == 0 ||
                     current instanceof LPipe && current.getAngle() == 270 ||
                     current instanceof LPipe && current.getAngle() == 180) {
-                if (neighbor instanceof IPipe && neighbor.getAngle() == 0 ||
+                return neighbor instanceof IPipe && neighbor.getAngle() == 0 ||
                         neighbor instanceof LPipe && neighbor.getAngle() == 0 ||
-                        neighbor instanceof LPipe && neighbor.getAngle() == 90) {
-                    return true;
-                }
+                        neighbor instanceof LPipe && neighbor.getAngle() == 90;
             }
         } else if (current.getColumn() > neighbor.getColumn()) {
             if (current instanceof IPipe && current.getAngle() == 0 ||
                     current instanceof LPipe && current.getAngle() == 0 ||
                     current instanceof LPipe && current.getAngle() == 90) {
-                if (neighbor instanceof IPipe && neighbor.getAngle() == 0 ||
+                return neighbor instanceof IPipe && neighbor.getAngle() == 0 ||
                         neighbor instanceof LPipe && neighbor.getAngle() == 270 ||
-                        neighbor instanceof LPipe && neighbor.getAngle() == 180) {
-                    return true;
-                }
+                        neighbor instanceof LPipe && neighbor.getAngle() == 180;
             }
         }
         return false;
@@ -166,6 +153,14 @@ public class GameLogic {
             return checkHorizontalConnection(current, neighbor);
         }
         return false;
+    }
+
+    protected void unhighlightTiles() {
+        for (Tile[] tiles : this.currentBoard.getGrid()) {
+            for (Tile tile : tiles) {
+                tile.setConstantHighlight(false);
+            }
+        }
     }
 
     protected void checkWin() {

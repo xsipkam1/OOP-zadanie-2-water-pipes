@@ -8,6 +8,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Tile extends JPanel {
+
     @Setter
     private boolean highlight;
     @Setter
@@ -21,7 +22,9 @@ public class Tile extends JPanel {
     @Getter @Setter
     private Tile previous;
 
-    public Tile() {
+    public Tile(int row, int column) {
+        this.row = row;
+        this.column = column;
         this.highlight = false;
         this.constantHighlight = false;
         this.visited = false;

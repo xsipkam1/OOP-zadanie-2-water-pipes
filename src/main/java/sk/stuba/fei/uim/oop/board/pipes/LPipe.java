@@ -9,7 +9,8 @@ import java.io.IOException;
 
 public class LPipe extends Pipe{
 
-    public LPipe() {
+    public LPipe(int row, int column) {
+        super(row, column);
         try {
             this.pipeImage = ImageIO.read(Board.class.getResourceAsStream("/l_pipe.png"));
         } catch (IOException | IllegalArgumentException ignored) {

@@ -3,6 +3,7 @@ package sk.stuba.fei.uim.oop.controls;
 import lombok.Getter;
 import lombok.Setter;
 import sk.stuba.fei.uim.oop.board.*;
+import sk.stuba.fei.uim.oop.board.pipes.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 
 public class GameLogic {
 
-    private static final int INITIAL_BOARD_SIZE = 8;
+    public static final int INITIAL_BOARD_SIZE = 8;
     @Getter
     private final JLabel boardSizeLabel;
     @Getter
@@ -59,15 +60,16 @@ public class GameLogic {
     }
 
     protected void checkWin() {
-        ArrayList<Tile> stack = new ArrayList<>();
-        ArrayList<Tile> visited = new ArrayList<>();
+        ArrayList<Pipe> stack = new ArrayList<>();
+        ArrayList<Pipe> visited = new ArrayList<>();
 
-        ArrayList<Tile> path = this.currentBoard.getPath();
-        for (Tile tile : path) {
-            tile.setConstantHighlight(false);
+        for (Tile[] tiles : this.currentBoard.getGrid()) {
+            for (Tile tile : tiles) {
+                tile.setConstantHighlight(false);
+            }
         }
 
-        Tile current = currentBoard.getStart();
+        Pipe current = (Pipe)currentBoard.getStart();
         stack.add(current);
 
         while (!stack.isEmpty()) {
@@ -75,23 +77,23 @@ public class GameLogic {
             if (current.equals(currentBoard.getStart())) {
                 if ((current.getRow() != 0 || current.getColumn() != 0) && (current.getColumn() != 0 || current.getRow() != currentBoardSize - 1) && (current.getColumn() != currentBoardSize - 1 || current.getRow() != 0)) {
                     if (current.getRow() == 0) {
-                        if (current.getType().equals(Type.L_PIPE)) {
+                        if (current instanceof LPipe) {
                             if (current.getAngle() == 270 || current.getAngle() == 0) {
-                                return;
+                                break;
                             }
-                        } else if (current.getType().equals(Type.PIPE)) {
+                        } else if (current instanceof IPipe) {
                             if (current.getAngle() != 90) {
-                                return;
+                                break;
                             }
                         }
                     } else if (current.getColumn() == 0) {
-                        if (current.getType().equals(Type.L_PIPE)) {
+                        if (current instanceof LPipe) {
                             if (current.getAngle() == 180 || current.getAngle() == 270) {
-                                return;
+                                break;
                             }
-                        } else if (current.getType().equals(Type.PIPE)) {
+                        } else if (current instanceof IPipe) {
                             if (current.getAngle() != 0) {
-                                return;
+                                break;
                             }
                         }
                     }
@@ -102,23 +104,23 @@ public class GameLogic {
             if (current.equals(currentBoard.getEnd())) {
                 if ((current.getRow() != currentBoardSize - 1 || current.getColumn() != currentBoardSize - 1) && (current.getColumn() != 0 || current.getRow() != currentBoardSize - 1) && (current.getColumn() != currentBoardSize - 1 || current.getRow() != 0)) {
                     if (current.getRow() == currentBoardSize - 1) {
-                        if (current.getType().equals(Type.L_PIPE)) {
+                        if (current instanceof LPipe) {
                             if (current.getAngle() == 90 || current.getAngle() == 180) {
-                                return;
+                                break;
                             }
-                        } else if (current.getType().equals(Type.PIPE)) {
+                        } else if (current instanceof IPipe) {
                             if (current.getAngle() != 90) {
-                                return;
+                                break;
                             }
                         }
                     } else if (current.getColumn() == currentBoardSize - 1) {
-                        if (current.getType().equals(Type.L_PIPE)) {
+                        if (current instanceof LPipe) {
                             if (current.getAngle() == 0 || current.getAngle() == 90) {
-                                return;
+                                break;
                             }
-                        } else if (current.getType().equals(Type.PIPE)) {
+                        } else if (current instanceof IPipe) {
                             if (current.getAngle() != 0) {
-                                return;
+                                break;
                             }
                         }
                     }
@@ -132,38 +134,59 @@ public class GameLogic {
                 current.setConstantHighlight(true);
             }
 
-            ArrayList<Tile> neighbors = current.findAllAdjacentTiles(currentBoard.getPath());
+            ArrayList<Tile> neighbors = current.getNeighbors(currentBoard.getGrid());
 
-            for (Tile neighbor : neighbors) {
+            ArrayList<Pipe> pipes = new ArrayList<>();
+            for (Tile tile : neighbors) {
+                if (tile instanceof Pipe) {
+                    pipes.add((Pipe) tile);
+                }
+            }
+
+            for (Pipe neighbor : pipes) {
                 if (!visited.contains(neighbor)) {
-                    Type currentType = current.getType();
-                    Type neighborType = neighbor.getType();
                     if (current.getColumn() == neighbor.getColumn()) {
                         if (current.getRow() < neighbor.getRow()) {
-                            if (currentType.equals(Type.PIPE) && current.getAngle()==90 || currentType.equals(Type.L_PIPE) && current.getAngle()==270 || currentType.equals(Type.L_PIPE) && current.getAngle()==0) {
-                                if (neighborType.equals(Type.PIPE) && neighbor.getAngle()==90 || neighborType.equals(Type.L_PIPE) && neighbor.getAngle()==90 || neighborType.equals(Type.L_PIPE) && neighbor.getAngle()==180) {
+                            if (current instanceof IPipe && current.getAngle()==90
+                                    || current instanceof LPipe && current.getAngle()==270
+                                    || current instanceof LPipe && current.getAngle()==0) {
+                                if (neighbor instanceof IPipe && neighbor.getAngle()==90
+                                        || neighbor instanceof LPipe && neighbor.getAngle()==90
+                                        || neighbor instanceof LPipe && neighbor.getAngle()==180) {
                                     stack.add(neighbor);
                                 }
                             }
                         }
                         if (current.getRow() > neighbor.getRow()) {
-                            if (currentType.equals(Type.PIPE) && current.getAngle()==90 || currentType.equals(Type.L_PIPE) && current.getAngle()==90 || currentType.equals(Type.L_PIPE) && current.getAngle()==180) {
-                                if (neighborType.equals(Type.PIPE) && neighbor.getAngle()==90 || neighborType.equals(Type.L_PIPE) && neighbor.getAngle()==270 || neighborType.equals(Type.L_PIPE) && neighbor.getAngle()==0) {
+                            if (current instanceof IPipe && current.getAngle()==90
+                                    || current instanceof LPipe && current.getAngle()==90
+                                    || current instanceof LPipe && current.getAngle()==180) {
+                                if (neighbor instanceof IPipe && neighbor.getAngle()==90
+                                        || neighbor instanceof LPipe && neighbor.getAngle()==270
+                                        || neighbor instanceof LPipe && neighbor.getAngle()==0) {
                                     stack.add(neighbor);
                                 }
                             }
                         }
                     } else if (current.getRow() == neighbor.getRow()) {
                         if (current.getColumn() < neighbor.getColumn()) {
-                            if (currentType.equals(Type.PIPE) && current.getAngle()==0 || currentType.equals(Type.L_PIPE) && current.getAngle()==270 || currentType.equals(Type.L_PIPE) && current.getAngle()==180) {
-                                if (neighborType.equals(Type.PIPE) && neighbor.getAngle()==0 || neighborType.equals(Type.L_PIPE) && neighbor.getAngle()==0 || neighborType.equals(Type.L_PIPE) && neighbor.getAngle()==90) {
+                            if (current instanceof IPipe && current.getAngle()==0
+                                    || current instanceof LPipe && current.getAngle()==270
+                                    || current instanceof LPipe && current.getAngle()==180) {
+                                if (neighbor instanceof IPipe && neighbor.getAngle()==0
+                                        || neighbor instanceof LPipe && neighbor.getAngle()==0
+                                        || neighbor instanceof LPipe && neighbor.getAngle()==90) {
                                     stack.add(neighbor);
                                 }
                             }
                         }
                         if (current.getColumn() > neighbor.getColumn()) {
-                            if (currentType.equals(Type.PIPE) && current.getAngle()==0 || currentType.equals(Type.L_PIPE) && current.getAngle()==0 || currentType.equals(Type.L_PIPE) && current.getAngle()==90) {
-                                if (neighborType.equals(Type.PIPE) && neighbor.getAngle()==0 || neighborType.equals(Type.L_PIPE) && neighbor.getAngle()==270 || neighborType.equals(Type.L_PIPE) && neighbor.getAngle()==180) {
+                            if (current instanceof IPipe && current.getAngle()==0
+                                    || current instanceof LPipe && current.getAngle()==0
+                                    || current instanceof LPipe && current.getAngle()==90) {
+                                if (neighbor instanceof IPipe && neighbor.getAngle()==0
+                                        || neighbor instanceof LPipe && neighbor.getAngle()==270
+                                        || neighbor instanceof LPipe && neighbor.getAngle()==180) {
                                     stack.add(neighbor);
                                 }
                             }
@@ -171,6 +194,7 @@ public class GameLogic {
                     }
                 }
             }
+
         }
         this.wins=-1;
     }

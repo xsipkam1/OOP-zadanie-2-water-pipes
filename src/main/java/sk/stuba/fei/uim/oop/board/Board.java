@@ -1,6 +1,8 @@
 package sk.stuba.fei.uim.oop.board;
 
 import lombok.Getter;
+import sk.stuba.fei.uim.oop.board.pipes.IPipe;
+import sk.stuba.fei.uim.oop.board.pipes.LPipe;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -13,7 +15,8 @@ import java.util.Random;
 public class Board extends JPanel {
 
     @Getter
-    private ArrayList<Tile> path;
+    private final ArrayList<Tile> path;
+    @Getter
     private Tile[][] grid;
     private BufferedImage background;
     @Getter
@@ -24,10 +27,11 @@ public class Board extends JPanel {
 
     public Board(int size) {
         this.generator = new Random();
-        this.path = new ArrayList<>();
-        this.initializeGrid(size);
         this.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
         this.loadBackground();
+        this.initializeGrid(size);
+        this.path = generatePath();
+        this.drawPath(size);
     }
 
     private void loadBackground() {
@@ -63,6 +67,10 @@ public class Board extends JPanel {
                 this.add(this.grid[i][j]);
             }
         }
+        this.initializeStartEndTiles(size);
+    }
+
+    private void initializeStartEndTiles(int size) {
         if (generator.nextInt(2) == 1) {
             this.start = grid[generator.nextInt(size)][0];
             this.end = grid[generator.nextInt(size)][size - 1];
@@ -70,13 +78,30 @@ public class Board extends JPanel {
             this.start = grid[0][generator.nextInt(size)];
             this.end = grid[size - 1][generator.nextInt(size)];
         }
-        this.start.setOpaque(true);
-        this.start.setBackground(Color.GRAY);
-        this.end.setOpaque(true);
-        this.end.setBackground(Color.GRAY);
-        this.path = generatePath();
-        this.drawPath(size);
+    }
 
+    private IPipe replaceTileWithIPipe(Tile tile, int size) {
+        IPipe pipe = new IPipe();
+        pipe.setRow(tile.getRow());
+        pipe.setColumn(tile.getColumn());
+        pipe.setAngle(this.generator.nextInt(2) * 90);
+        int index = tile.getRow() * size + tile.getColumn();
+        this.remove(tile);
+        this.grid[pipe.getRow()][pipe.getColumn()] = pipe;
+        this.add(this.grid[pipe.getRow()][pipe.getColumn()], index);
+        return pipe;
+    }
+
+    private LPipe replaceTileWithLPipe(Tile tile, int size) {
+        LPipe pipe = new LPipe();
+        pipe.setRow(tile.getRow());
+        pipe.setColumn(tile.getColumn());
+        pipe.setAngle(this.generator.nextInt(4) * 90);
+        int index = tile.getRow() * size + tile.getColumn();
+        this.remove(tile);
+        this.grid[pipe.getRow()][pipe.getColumn()] = pipe;
+        this.add(this.grid[pipe.getRow()][pipe.getColumn()], index);
+        return pipe;
     }
 
     private void drawPath(int size) {
@@ -86,37 +111,41 @@ public class Board extends JPanel {
                 Tile previousTile = path.get(currentTile - 1);
                 Tile nextTile = path.get(currentTile + 1);
                 if (previousTile.getRow() == nextTile.getRow() || previousTile.getColumn() == nextTile.getColumn()) {
-                    tile.setType(Type.PIPE);
-                    tile.setAngle(this.generator.nextInt(2) * 90);
+                    replaceTileWithIPipe(tile, size);
                 } else {
-                    tile.setType(Type.L_PIPE);
-                    tile.setAngle(this.generator.nextInt(4) * 90);
+                    replaceTileWithLPipe(tile, size);
                 }
             }
         }
+
         Tile nextTile = path.get(1);
-        if (this.start.getColumn() == 0 && this.start.getRow() == 0 || this.start.getColumn() == 0 && this.start.getRow() == size - 1 || this.start.getColumn() == size - 1 && this.start.getRow() == 0) {
-            this.start.setType(Type.PIPE);
-            this.start.setAngle(this.generator.nextInt(2) * 90);
-        } else if ((this.start.getColumn() == 0 && nextTile.getRow() != start.getRow()) || (this.start.getColumn() != 0 && nextTile.getColumn() != start.getColumn())) {
-            this.start.setType(Type.L_PIPE);
-            this.start.setAngle(this.generator.nextInt(4) * 90);
+        if (this.start.getColumn() == 0 && this.start.getRow() == 0
+                || this.start.getColumn() == 0 && this.start.getRow() == size - 1
+                || this.start.getColumn() == size - 1 && this.start.getRow() == 0) {
+            this.start = replaceTileWithIPipe(start, size);
+        } else if ((this.start.getColumn() == 0 && nextTile.getRow() != start.getRow())
+                || (this.start.getColumn() != 0 && nextTile.getColumn() != start.getColumn())) {
+            this.start = replaceTileWithLPipe(start, size);
         } else {
-            this.start.setType(Type.PIPE);
-            this.start.setAngle(this.generator.nextInt(2) * 90);
+            this.start = replaceTileWithIPipe(start, size);
         }
 
         Tile previousTile = path.get(path.size() - 2);
-        if (this.end.getColumn() == size - 1 && this.end.getRow() == size - 1 || this.end.getColumn() == 0 && this.end.getRow() == size - 1 || this.end.getColumn() == size - 1 && this.end.getRow() == 0){
-            this.end.setType(Type.PIPE);
-            this.end.setAngle(this.generator.nextInt(2) * 90);
-        } else if ((this.end.getColumn() == size - 1 && previousTile.getRow() != end.getRow()) || (this.end.getColumn() != size - 1 && previousTile.getColumn() != end.getColumn())) {
-            this.end.setType(Type.L_PIPE);
-            this.end.setAngle(this.generator.nextInt(4) * 90);
+        if (this.end.getColumn() == size - 1 && this.end.getRow() == size - 1
+                || this.end.getColumn() == 0 && this.end.getRow() == size - 1
+                || this.end.getColumn() == size - 1 && this.end.getRow() == 0) {
+            this.end = replaceTileWithIPipe(end, size);
+        } else if ((this.end.getColumn() == size - 1 && previousTile.getRow() != end.getRow())
+                || (this.end.getColumn() != size - 1 && previousTile.getColumn() != end.getColumn())) {
+            this.end = replaceTileWithLPipe(end, size);
         } else {
-            this.end.setType(Type.PIPE);
-            this.end.setAngle(this.generator.nextInt(2) * 90);
+            this.end = replaceTileWithIPipe(end, size);
         }
+
+        this.start.setOpaque(true);
+        this.start.setBackground(Color.GRAY);
+        this.end.setOpaque(true);
+        this.end.setBackground(Color.LIGHT_GRAY);
     }
 
     private ArrayList<Tile> generatePath() {

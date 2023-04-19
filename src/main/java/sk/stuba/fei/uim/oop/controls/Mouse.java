@@ -1,7 +1,7 @@
 package sk.stuba.fei.uim.oop.controls;
 
 import sk.stuba.fei.uim.oop.board.Tile;
-import sk.stuba.fei.uim.oop.board.Type;
+import sk.stuba.fei.uim.oop.board.pipes.Pipe;
 import sk.stuba.fei.uim.oop.controls.adapters.MouseAdapter;
 
 import java.awt.*;
@@ -26,12 +26,10 @@ public class Mouse extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent e) {
         Component current = this.game.getCurrentBoard().getComponentAt(e.getX(), e.getY());
-        if (current instanceof Tile) {
-            if (((Tile) current).getType().equals(Type.PIPE) || ((Tile) current).getType().equals(Type.L_PIPE)) {
-                ((Tile) current).setAngle();
-                ((Tile) current).setHighlight(true);
-                this.game.getCurrentBoard().repaint();
-            }
+        if (current instanceof Pipe) {
+            ((Pipe) current).setAngle();
+            ((Pipe) current).setHighlight(true);
+            this.game.getCurrentBoard().repaint();
         }
     }
 

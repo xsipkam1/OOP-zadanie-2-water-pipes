@@ -11,7 +11,7 @@ public class Tile extends JPanel {
 
     @Setter
     private boolean highlight;
-    @Setter
+    @Getter @Setter
     private boolean constantHighlight;
     @Getter @Setter
     private boolean visited;

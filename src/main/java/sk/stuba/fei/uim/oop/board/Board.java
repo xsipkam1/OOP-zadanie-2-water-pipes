@@ -1,8 +1,10 @@
 package sk.stuba.fei.uim.oop.board;
 
 import lombok.Getter;
-import sk.stuba.fei.uim.oop.board.pipes.IPipe;
-import sk.stuba.fei.uim.oop.board.pipes.LPipe;
+
+import sk.stuba.fei.uim.oop.board.pipes.*;
+import sk.stuba.fei.uim.oop.board.pipes.curved.LPipe;
+import sk.stuba.fei.uim.oop.board.pipes.straight.IPipe;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -23,19 +25,21 @@ public class Board extends JPanel {
     @Getter
     private Tile end;
     private BufferedImage background;
+    private final int size;
     private final Random generator;
 
     public Board(int size) {
+        this.size=size;
         this.generator = new Random();
         this.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
         this.loadBackground();
-        this.initializeGrid(size);
+        this.initializeGrid();
         this.path = generatePath();
-        this.drawPath(size);
+        this.drawPath();
     }
 
     private void loadBackground() {
-        this.background = null;
+        background = null;
         try {
             this.background = ImageIO.read(Board.class.getResourceAsStream("/water.jpg"));
             return;
@@ -50,123 +54,122 @@ public class Board extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (this.background != null) {
-            g.drawImage(this.background, 0, 0, null);
+        if (background != null) {
+            g.drawImage(background, 0, 0, null);
         }
     }
 
-    private void initializeGrid(int size) {
+    private void initializeGrid() {
         this.setLayout(new GridLayout(size, size));
-        this.grid = new Tile[size][size];
+        grid = new Tile[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 Tile tile = new Tile(i, j);
-                this.grid[i][j] = tile;
-                this.add(this.grid[i][j]);
+                grid[i][j] = tile;
+                this.add(grid[i][j]);
             }
         }
-        this.initializeStartEndTiles(size);
+        initializeStartEndTiles();
     }
 
-    private void initializeStartEndTiles(int size) {
+    private void initializeStartEndTiles() {
         if (generator.nextInt(2) == 1) {
-            this.start = grid[generator.nextInt(size)][0];
-            this.end = grid[generator.nextInt(size)][size - 1];
+            start = grid[generator.nextInt(size)][0];
+            end = grid[generator.nextInt(size)][size - 1];
         } else {
-            this.start = grid[0][generator.nextInt(size)];
-            this.end = grid[size - 1][generator.nextInt(size)];
+            start = grid[0][generator.nextInt(size)];
+            end = grid[size - 1][generator.nextInt(size)];
         }
     }
 
-    private IPipe replaceTileWithIPipe(Tile tile, int size) {
+    private void insertPipe(Pipe pipe, Tile tile) {
+        int index = tile.getRow() * size + tile.getColumn();
+        this.remove(tile);
+        grid[pipe.getRow()][pipe.getColumn()] = pipe;
+        this.add(grid[pipe.getRow()][pipe.getColumn()], index);
+    }
+
+    private IPipe replaceTileWithIPipe(Tile tile) {
         IPipe pipe = new IPipe(tile.getRow(), tile.getColumn());
-        pipe.setAngle(this.generator.nextInt(2) * 90);
-        int index = tile.getRow() * size + tile.getColumn();
-        this.remove(tile);
-        this.grid[pipe.getRow()][pipe.getColumn()] = pipe;
-        this.add(this.grid[pipe.getRow()][pipe.getColumn()], index);
+        insertPipe(pipe, tile);
         return pipe;
     }
 
-    private LPipe replaceTileWithLPipe(Tile tile, int size) {
+    private LPipe replaceTileWithLPipe(Tile tile) {
         LPipe pipe = new LPipe(tile.getRow(), tile.getColumn());
-        pipe.setAngle(this.generator.nextInt(4) * 90);
-        int index = tile.getRow() * size + tile.getColumn();
-        this.remove(tile);
-        this.grid[pipe.getRow()][pipe.getColumn()] = pipe;
-        this.add(this.grid[pipe.getRow()][pipe.getColumn()], index);
+        insertPipe(pipe, tile);
         return pipe;
     }
 
-    private void drawStart(int size) {
+    private void drawStart() {
         Tile nextTile = path.get(1);
-        if (this.start.getColumn() == 0 && this.start.getRow() == 0 ||
-                this.start.getColumn() == 0 && this.start.getRow() == size - 1 ||
-                this.start.getColumn() == size - 1 && this.start.getRow() == 0) {
-            this.start = replaceTileWithIPipe(start, size);
-        } else if ((this.start.getColumn() == 0 && nextTile.getRow() != start.getRow()) ||
-                (this.start.getColumn() != 0 && nextTile.getColumn() != start.getColumn())) {
-            this.start = replaceTileWithLPipe(start, size);
+        if (start.getColumn() == 0 && start.getRow() == 0 ||
+                start.getColumn() == 0 && start.getRow() == size - 1 ||
+                start.getColumn() == size - 1 && start.getRow() == 0) {
+            start = replaceTileWithIPipe(start);
+        } else if ((start.getColumn() == 0 && nextTile.getRow() != start.getRow()) ||
+                (start.getColumn() != 0 && nextTile.getColumn() != start.getColumn())) {
+            start = replaceTileWithLPipe(start);
         } else {
-            this.start = replaceTileWithIPipe(start, size);
+            start = replaceTileWithIPipe(start);
         }
-        this.start.setOpaque(true);
-        this.start.setBackground(Color.GRAY);
+        start.setOpaque(true);
+        start.setBackground(Color.GRAY);
     }
 
-    private void drawEnd(int size) {
+    private void drawEnd() {
         Tile previousTile = path.get(path.size() - 2);
-        if (this.end.getColumn() == size - 1 && this.end.getRow() == size - 1 ||
-                this.end.getColumn() == 0 && this.end.getRow() == size - 1 ||
-                this.end.getColumn() == size - 1 && this.end.getRow() == 0) {
-            this.end = replaceTileWithIPipe(end, size);
-        } else if ((this.end.getColumn() == size - 1 && previousTile.getRow() != end.getRow()) ||
-                (this.end.getColumn() != size - 1 && previousTile.getColumn() != end.getColumn())) {
-            this.end = replaceTileWithLPipe(end, size);
+        if (end.getColumn() == size - 1 && end.getRow() == size - 1 ||
+                end.getColumn() == 0 && end.getRow() == size - 1 ||
+                end.getColumn() == size - 1 && end.getRow() == 0) {
+            end = replaceTileWithIPipe(end);
+        } else if ((end.getColumn() == size - 1 && previousTile.getRow() != end.getRow()) ||
+                (end.getColumn() != size - 1 && previousTile.getColumn() != end.getColumn())) {
+            end = replaceTileWithLPipe(end);
         } else {
-            this.end = replaceTileWithIPipe(end, size);
+            end = replaceTileWithIPipe(end);
         }
-        this.end.setOpaque(true);
-        this.end.setBackground(Color.LIGHT_GRAY);
+        end.setOpaque(true);
+        end.setBackground(Color.LIGHT_GRAY);
     }
 
-    private void drawPath(int size) {
+    private void drawPath() {
         for (Tile tile : path) {
             int currentTile = path.indexOf(tile);
             if (currentTile > 0 && currentTile < path.size() - 1) {
                 Tile previousTile = path.get(currentTile - 1);
                 Tile nextTile = path.get(currentTile + 1);
                 if (previousTile.getRow() == nextTile.getRow() || previousTile.getColumn() == nextTile.getColumn()) {
-                    replaceTileWithIPipe(tile, size);
+                    replaceTileWithIPipe(tile);
                 } else {
-                    replaceTileWithLPipe(tile, size);
+                    replaceTileWithLPipe(tile);
                 }
             }
         }
-        drawStart(size);
-        drawEnd(size);
+        drawStart();
+        drawEnd();
     }
 
     private ArrayList<Tile> generatePath() {
         ArrayList<Tile> path = new ArrayList<>();
         ArrayList<Tile> stack = new ArrayList<>();
-        stack.add(this.start);
-        this.start.setVisited(true);
+        stack.add(start);
+        start.setVisited(true);
         while (!stack.isEmpty()) {
             Tile current = stack.get(stack.size() - 1);
-            if (current.equals(this.end)) {
+            if (current.equals(end)) {
                 while (current != null) {
                     path.add(current);
                     current = current.getPrevious();
                 }
                 break;
             }
-            ArrayList<Tile> currentNeighbors = current.getNeighbors(this.grid);
+            ArrayList<Tile> currentNeighbors = current.getNeighbors(grid);
             currentNeighbors.removeIf(Tile::isVisited);
             if (currentNeighbors.isEmpty()) {
                 stack.remove(stack.size() - 1);
             } else {
-                Tile neighbor = currentNeighbors.get(this.generator.nextInt(currentNeighbors.size()));
+                Tile neighbor = currentNeighbors.get(generator.nextInt(currentNeighbors.size()));
                 neighbor.setVisited(true);
                 stack.add(neighbor);
                 neighbor.setPrevious(current);

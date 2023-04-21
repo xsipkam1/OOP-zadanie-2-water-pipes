@@ -28,7 +28,7 @@ public class BoardInput extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
         Component current = this.game.getCurrentBoard().getComponentAt(e.getX(), e.getY());
         if (current instanceof Pipe) {
-            ((Pipe) current).setAngle();
+            ((Pipe) current).rotate();
             ((Pipe) current).setHighlight(true);
             this.game.getCurrentBoard().repaint();
         }

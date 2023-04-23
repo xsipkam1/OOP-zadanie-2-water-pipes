@@ -18,28 +18,27 @@ public class GameLogic {
     @Getter
     private final JLabel boardSizeLabel;
     @Getter
-    private final JLabel winsLabel;
+    private final JLabel levelLabel;
     @Getter
     private final GameFrame game;
     @Getter
     private Board currentBoard;
-    @Getter
-    @Setter
+    @Getter @Setter
     private int currentBoardSize;
     @Setter
-    private int wins;
+    private int level;
     private final BoardInput userBoardInputManager;
 
     public GameLogic(GameFrame gameFrame) {
         this.game = gameFrame;
         this.userBoardInputManager = new BoardInput(this);
         this.currentBoardSize = INITIAL_BOARD_SIZE;
-        this.wins = 0;
+        this.level = 1;
         this.initializeBoard();
         this.boardSizeLabel = new JLabel("BOARD SIZE: " + currentBoardSize);
         this.setupLabel(this.boardSizeLabel);
-        this.winsLabel = new JLabel("WIN STREAK: " + wins);
-        this.setupLabel(this.winsLabel);
+        this.levelLabel = new JLabel("LEVEL: " + level);
+        this.setupLabel(this.levelLabel);
     }
 
     private void setupLabel(JLabel label) {
@@ -58,7 +57,7 @@ public class GameLogic {
         this.game.remove(currentBoard);
         this.initializeBoard();
         this.game.add(currentBoard);
-        this.winsLabel.setText("WIN STREAK: " + wins);
+        this.levelLabel.setText("LEVEL: " + level);
         this.game.setFocusable(true);
         this.game.requestFocus();
         this.game.revalidate();
@@ -76,9 +75,7 @@ public class GameLogic {
     }
 
     private boolean isStartCorrect(Pipe start) {
-        if ((start.getRow() != 0 || start.getColumn() != 0) &&
-                (start.getColumn() != 0 || start.getRow() != currentBoardSize - 1) &&
-                (start.getColumn() != currentBoardSize - 1 || start.getRow() != 0)) {
+        if (!start.isInCorner(currentBoardSize)) {
             if (start.getRow() == 0) {
                 if (start instanceof LPipe) {
                     return !((LPipe) start).getDirection().isFacingDown();
@@ -97,9 +94,7 @@ public class GameLogic {
     }
 
     private boolean isEndCorrect(Pipe end) {
-        if ((end.getRow() != currentBoardSize - 1 || end.getColumn() != currentBoardSize - 1) &&
-                (end.getColumn() != 0 || end.getRow() != currentBoardSize - 1) &&
-                (end.getColumn() != currentBoardSize - 1 || end.getRow() != 0)) {
+        if (!end.isInCorner(currentBoardSize)) {
             if (end.getRow() == currentBoardSize - 1) {
                 if (end instanceof LPipe) {
                     return !((LPipe) end).getDirection().isFacingUp();
@@ -134,7 +129,7 @@ public class GameLogic {
                 if (!isEndCorrect(current)) {
                     break;
                 }
-                this.wins++;
+                this.level++;
                 this.restartGame();
                 return;
             }
@@ -150,7 +145,6 @@ public class GameLogic {
                 }
             }
         }
-        this.wins = -1;
     }
 
 }

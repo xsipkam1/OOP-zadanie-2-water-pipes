@@ -1,11 +1,9 @@
 package sk.stuba.fei.uim.oop.board.pipes.curved;
 
 import lombok.Getter;
-import sk.stuba.fei.uim.oop.board.Board;
 import sk.stuba.fei.uim.oop.board.pipes.Pipe;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
@@ -18,8 +16,9 @@ public class LPipe extends Pipe {
         super(row, column);
         this.direction = Direction.values()[generator.nextInt(Direction.values().length)];
         try {
-            this.pipeImage = ImageIO.read(Board.class.getResourceAsStream("/l_pipe.png"));
-        } catch (IOException | IllegalArgumentException ignored) {
+            this.pipeImage = ImageIO.read(LPipe.class.getResourceAsStream("/l_pipe.png"));
+        } catch (IOException | IllegalArgumentException e) {
+            e.printStackTrace();
         }
     }
 
@@ -40,7 +39,6 @@ public class LPipe extends Pipe {
                 break;
         }
         this.repaint();
-        this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     }
 
     @Override

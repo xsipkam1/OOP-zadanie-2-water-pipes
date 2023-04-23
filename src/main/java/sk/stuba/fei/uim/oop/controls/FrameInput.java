@@ -16,8 +16,9 @@ public class FrameInput extends KeyboardAdapter {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE:
                 this.game.getGame().dispose();
+                System.exit(0);
             case KeyEvent.VK_R:
-                this.game.setWins(0);
+                this.game.setLevel(1);
                 this.game.restartGame();
                 break;
             case KeyEvent.VK_ENTER:

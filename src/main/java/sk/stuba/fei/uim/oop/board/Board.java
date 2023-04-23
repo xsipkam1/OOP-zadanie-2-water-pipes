@@ -29,7 +29,7 @@ public class Board extends JPanel {
     private final Random generator;
 
     public Board(int size) {
-        this.size=size;
+        this.size = size;
         this.generator = new Random();
         this.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
         this.loadBackground();
@@ -41,12 +41,10 @@ public class Board extends JPanel {
     private void loadBackground() {
         background = null;
         try {
-            this.background = ImageIO.read(Board.class.getResourceAsStream("/water.jpg"));
+            background = ImageIO.read(Board.class.getResourceAsStream("/water.jpg"));
             return;
-        } catch (IOException e) {
-            System.out.println("Obrazok sa nepodarilo nacitat, nacitavam povodnu farbu pozadia.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Obrazok sa nenasiel, nacitavam povodnu farbu pozadia.");
+        } catch (IOException | IllegalArgumentException e) {
+            e.printStackTrace();
         }
         this.setBackground(Color.CYAN);
     }
@@ -103,9 +101,7 @@ public class Board extends JPanel {
 
     private void drawStart() {
         Tile nextTile = path.get(1);
-        if (start.getColumn() == 0 && start.getRow() == 0 ||
-                start.getColumn() == 0 && start.getRow() == size - 1 ||
-                start.getColumn() == size - 1 && start.getRow() == 0) {
+        if (start.isInCorner(size)) {
             start = replaceTileWithIPipe(start);
         } else if ((start.getColumn() == 0 && nextTile.getRow() != start.getRow()) ||
                 (start.getColumn() != 0 && nextTile.getColumn() != start.getColumn())) {
@@ -119,9 +115,7 @@ public class Board extends JPanel {
 
     private void drawEnd() {
         Tile previousTile = path.get(path.size() - 2);
-        if (end.getColumn() == size - 1 && end.getRow() == size - 1 ||
-                end.getColumn() == 0 && end.getRow() == size - 1 ||
-                end.getColumn() == size - 1 && end.getRow() == 0) {
+        if (end.isInCorner(size)) {
             end = replaceTileWithIPipe(end);
         } else if ((end.getColumn() == size - 1 && previousTile.getRow() != end.getRow()) ||
                 (end.getColumn() != size - 1 && previousTile.getColumn() != end.getColumn())) {

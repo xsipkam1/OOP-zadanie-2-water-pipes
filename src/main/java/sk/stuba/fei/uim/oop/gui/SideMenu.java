@@ -36,7 +36,7 @@ public class SideMenu extends JPanel {
         upperPart.add(buttonCheck);
 
         JPanel lowerPart = new JPanel(new GridLayout(1, 3));
-        lowerPart.add(baseLogic.getWinsLabel());
+        lowerPart.add(baseLogic.getLevelLabel());
         lowerPart.add(slider);
         lowerPart.add(baseLogic.getBoardSizeLabel());
 

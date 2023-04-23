@@ -1,11 +1,9 @@
 package sk.stuba.fei.uim.oop.board.pipes.straight;
 
 import lombok.Getter;
-import sk.stuba.fei.uim.oop.board.Board;
 import sk.stuba.fei.uim.oop.board.pipes.Pipe;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
@@ -18,8 +16,9 @@ public class IPipe extends Pipe {
         super(row, column);
         this.orientation = Orientation.values()[generator.nextInt(Orientation.values().length)];
         try {
-            this.pipeImage = ImageIO.read(Board.class.getResourceAsStream("/pipe.png"));
-        } catch (IOException | IllegalArgumentException ignored) {
+            this.pipeImage = ImageIO.read(IPipe.class.getResourceAsStream("/pipe.png"));
+        } catch (IOException | IllegalArgumentException e) {
+            e.printStackTrace();
         }
     }
 
@@ -34,7 +33,6 @@ public class IPipe extends Pipe {
                 break;
         }
         this.repaint();
-        this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     }
 
     @Override

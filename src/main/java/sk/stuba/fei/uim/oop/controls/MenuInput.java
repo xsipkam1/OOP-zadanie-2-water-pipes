@@ -21,7 +21,7 @@ public class MenuInput implements ActionListener, ChangeListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == buttonRestart) {
-            this.game.setWins(0);
+            this.game.setLevel(1);
             this.game.restartGame();
         } else if (e.getSource() == buttonCheck) {
             this.game.checkWin();
@@ -34,7 +34,7 @@ public class MenuInput implements ActionListener, ChangeListener {
         if (!source.getValueIsAdjusting()) {
             this.game.setCurrentBoardSize(source.getValue());
             this.game.getBoardSizeLabel().setText("BOARD SIZE: " + this.game.getCurrentBoardSize());
-            this.game.setWins(0);
+            this.game.setLevel(1);
             this.game.restartGame();
         }
     }

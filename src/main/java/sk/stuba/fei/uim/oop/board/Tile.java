@@ -15,10 +15,10 @@ public class Tile extends JPanel {
     private boolean constantHighlight;
     @Getter @Setter
     private boolean visited;
-    @Getter @Setter
-    private int row;
-    @Getter @Setter
-    private int column;
+    @Getter
+    private final int row;
+    @Getter
+    private final int column;
     @Getter @Setter
     private Tile previous;
 
@@ -48,6 +48,13 @@ public class Tile extends JPanel {
             neighbors.add(grid[this.row][this.column + 1]);
         }
         return neighbors;
+    }
+
+    public boolean isInCorner(int boardSize) {
+        return this.getColumn() == 0 && this.getRow() == 0 ||
+                this.getColumn() == boardSize - 1 && this.getRow() == boardSize - 1 ||
+                this.getColumn() == 0 && this.getRow() == boardSize - 1 ||
+                this.getColumn() == boardSize - 1 && this.getRow() == 0;
     }
 
     @Override
